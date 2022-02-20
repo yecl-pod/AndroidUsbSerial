@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tv_devName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:textColor="@color/purple_500"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        android:text="@string/str_devName"/>
+
+    <TextView
+        android:id="@+id/tv_devVendorId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:textColor="@color/purple_500"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/tv_devName"
+        android:text="@string/str_devVendorId"/>
+
+    <TextView
+        android:id="@+id/tv_devProductId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:textColor="@color/purple_500"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/tv_devName"
+        android:layout_toEndOf="@+id/tv_devVendorId"
+        android:text="@string/str_devProductId"/>
+
+    <TextView
+        android:id="@+id/tv_rxMsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="12dp"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        android:text="rx message"/>
+
+    <EditText
+        android:id="@+id/et_txMsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:ems="10"
+        android:inputType="text"
+        android:textSize="20sp"
+        android:layout_below="@+id/tv_rxMsg"
+        android:hint="tx message"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/et_txMsg"
+        android:id="@+id/relyt_btn">
+        <Button
+            android:id="@+id/btn_cnt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cnt"/>
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/btn_cnt"
+            android:layout_marginStart="10dp"
+            android:text="@string/btn_send"/>
+    </RelativeLayout>
+
+</RelativeLayout>
