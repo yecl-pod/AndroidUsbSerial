@@ -12,6 +12,7 @@ import android.hardware.usb.UsbManager
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
 
@@ -21,18 +22,20 @@ class PodUsbSerialService: Service() {
     var mDevName: String? = null
     var mDevVendorId: Int = 0
     var mDevProductId: Int = 0
+
+    private val TAG: String = "PodSerial"
+
     companion object {
         val ACTION_USB_MSGRECEIVED: String = "actionUsbMsgReceived"
         val ACTION_USB_CONNECTED: String = "actionUsbConnected"
+        val ACTION_USB_PERMISSION = "permission"
     }
 
     /*! usb */
     lateinit var mUsbManager: UsbManager
-
     private var mDevice: UsbDevice? = null
     private var mSerial: UsbSerialDevice? = null // from felhr library
     private var mConnection: UsbDeviceConnection? = null
-    private val ACTION_USB_PERMISSION = "permission"
 
     override fun onCreate() {
         isConnected = false
@@ -41,7 +44,6 @@ class PodUsbSerialService: Service() {
     }
 
     override fun onBind(p0: Intent?): IBinder? {
-
         return UsbBinder()
     }
 
@@ -50,7 +52,6 @@ class PodUsbSerialService: Service() {
         if (!isConnected && !usbDevices?.isEmpty()!!) {
             usbDevices.forEach() { entry ->
                 mDevice = entry.value
-
                 val intent: PendingIntent =
                     PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), 0)
                 mUsbManager.requestPermission(mDevice, intent)
@@ -58,14 +59,20 @@ class PodUsbSerialService: Service() {
                 return
             }
         } else
-            Log.i("Serial", "No usb device or has connection")
+            Log.i(TAG, "No usb device or has connection")
     }
 
     fun usbSendData(data: String) {
-        mSerial?.write(data.toByteArray())
-        Log.i("Serial", "Send data: " + data.toByteArray())
+        if (!isConnected) {
+            Toast.makeText(applicationContext, "No device is connected", Toast.LENGTH_SHORT).show()
+            Log.i(TAG, "no device is connected")
+        } else {
+            mSerial?.write(data.toByteArray())
+            Log.i(TAG, "Send data: " + data.toByteArray())
+        }
     }
 
+    // set binder for mainActivity to get instance
     inner class UsbBinder : Binder() {
         fun getService() = this@PodUsbSerialService
     }
@@ -83,8 +90,9 @@ class PodUsbSerialService: Service() {
             try {
                 mRxMsg = String(data!!)
                 this.sendBroadcast(Intent(ACTION_USB_MSGRECEIVED))
+                Toast.makeText(applicationContext, "msg", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Log.i("Serial", "Error in receiving message")
+                Log.i(TAG, "error in receiving message")
             }
         }
 
@@ -112,7 +120,7 @@ class PodUsbSerialService: Service() {
                         mDevProductId = mDevice?.productId!!
                         p0?.sendBroadcast(Intent(ACTION_USB_CONNECTED))
                         if (mSerial!!.open()) {
-                            Log.i("Serial", "port open [SUCCESS]")
+                            Log.i(TAG, "port open [SUCCESS]")
                             mSerial!!.setBaudRate(115200)
                             mSerial!!.setDataBits(UsbSerialDevice.DATA_BITS_8)
                             mSerial!!.setStopBits(UsbSerialDevice.STOP_BITS_1)
@@ -120,16 +128,18 @@ class PodUsbSerialService: Service() {
                             mSerial!!.setFlowControl(UsbSerialDevice.FLOW_CONTROL_OFF)
                             mSerial!!.read(usbReceiveCallback)
                         } else {
-                            Log.i("Serial", "port open [FAILED]")
+                            Log.i(TAG, "port open [FAILED]")
                         }
                     } else {
-                        Log.i("Serial", "permission not granted")
+                        Log.i(TAG, "permission not granted")
                     }
                 }
                 UsbManager.ACTION_USB_DEVICE_ATTACHED -> {
+                    Log.i(TAG, "device attached")
                     usbStartConnection()
                 }
                 UsbManager.ACTION_USB_DEVICE_DETACHED -> {
+                    Log.i(TAG, "device detached")
                     usbEndConnection()
                 }
             }

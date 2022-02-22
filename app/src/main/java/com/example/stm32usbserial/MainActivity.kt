@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // UI
         mTvDevName = findViewById(R.id.tv_devName)
         mTvDevVendorId = findViewById(R.id.tv_devVendorId)
         mTvDevProductId = findViewById(R.id.tv_devProductId)
@@ -42,16 +43,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onStart() {
         super.onStart()
+
+        // start and bind service
         val mIntent = Intent(this, PodUsbSerialService::class.java)
         startService(mIntent)
         bindService(mIntent, mConnection, BIND_AUTO_CREATE)
-
+        // set filter for service
         val filter = IntentFilter()
         filter.addAction(PodUsbSerialService.ACTION_USB_MSGRECEIVED)
         filter.addAction(PodUsbSerialService.ACTION_USB_CONNECTED)
         registerReceiver(mBroadcastReceiver, filter)
     }
 
+    // get service instance
     private var mConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             Toast.makeText(this@MainActivity, "Service is connected", Toast.LENGTH_SHORT).show()
@@ -67,6 +71,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    // button click
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.btn_cnt -> {
@@ -74,10 +79,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.btn_send -> {
                 mPodUsbSerialService?.usbSendData(mEtTxMsg?.text.toString())
+                mEtTxMsg?.setText("")
             }
         }
     }
 
+    // broadcast receiver to update message and device info
     private val mBroadcastReceiver = object: BroadcastReceiver() {
         @SuppressLint("SetTextI18n")
         override fun onReceive(p0: Context?, p1: Intent?) {
@@ -92,7 +99,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
-
     }
-
 }
