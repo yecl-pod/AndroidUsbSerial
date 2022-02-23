@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.nio.ByteBuffer
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var mTvDevName: TextView? = null
@@ -22,6 +23,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var mBtnSend: Button? = null
     private var mPodUsbSerialService: PodUsbSerialService? = null
     private var mBounded: Boolean = false
+
+    private var mBtnF: Button? = null
+    private var mBtnB: Button? = null
+    private var mBtnL: Button? = null
+    private var mBtnR: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +42,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         mBtnCnt = findViewById(R.id.btn_cnt)
         mBtnSend = findViewById(R.id.btn_send)
 
+        mBtnF = findViewById(R.id.btn_front)
+        mBtnB = findViewById(R.id.btn_back)
+        mBtnL = findViewById(R.id.btn_left)
+        mBtnR = findViewById(R.id.btn_right)
+
         // set click listener
         mBtnCnt?.setOnClickListener(this)
         mBtnSend?.setOnClickListener(this)
+        mBtnF?.setOnClickListener(this)
+        mBtnB?.setOnClickListener(this)
+        mBtnL?.setOnClickListener(this)
+        mBtnR?.setOnClickListener(this)
     }
 
     override fun onStart() {
@@ -80,6 +95,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_send -> {
                 mPodUsbSerialService?.usbSendData(mEtTxMsg?.text.toString())
                 mEtTxMsg?.setText("")
+            }
+            R.id.btn_front -> {
+                val cp: CommanderPacket = CommanderPacket(0F, 1F, 0F, 14000u)
+                mPodUsbSerialService?.usbSendData((cp as CrtpPacket).toByteArray())
+            }
+            R.id.btn_back -> {
+                val cp: CommanderPacket = CommanderPacket(0F, -1F, 0F, 14000u)
+                mPodUsbSerialService?.usbSendData((cp as CrtpPacket).toByteArray())
+            }
+            R.id.btn_left -> {
+                val cp: CommanderPacket = CommanderPacket(1F, 0F, 0F, 14000u)
+                mPodUsbSerialService?.usbSendData((cp as CrtpPacket).toByteArray())
+            }
+            R.id.btn_right -> {
+                val cp: CommanderPacket = CommanderPacket(-1F, 0F, 0F, 14000u)
+                mPodUsbSerialService?.usbSendData((cp as CrtpPacket).toByteArray())
             }
         }
     }

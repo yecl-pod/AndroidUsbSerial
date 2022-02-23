@@ -2,7 +2,7 @@ package com.example.stm32usbserial
 
 import java.nio.ByteBuffer
 
-class CommanderPacket(roll: Float, pitch: Float, yaw: Float, thrust: UShort): CrtpPacket() {
+class CommanderPacket(roll: Float, pitch: Float, yaw: Float, thrust: UShort): CrtpPacket(0, CrtpPort.COMMANDER) {
     private var mRoll: Float = roll
     private var mPitch: Float = pitch
     private var mYaw: Float = yaw

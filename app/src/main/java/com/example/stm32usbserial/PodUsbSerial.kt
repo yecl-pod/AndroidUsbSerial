@@ -72,6 +72,16 @@ class PodUsbSerialService: Service() {
         }
     }
 
+    fun usbSendData(data: ByteArray) {
+        if (!isConnected) {
+            Toast.makeText(applicationContext, "No device is connected", Toast.LENGTH_SHORT).show()
+            Log.i(TAG, "no device is connected")
+        } else {
+            mSerial?.write(data)
+            Log.i(TAG, "Send data: $data")
+        }
+    }
+
     // set binder for mainActivity to get instance
     inner class UsbBinder : Binder() {
         fun getService() = this@PodUsbSerialService
