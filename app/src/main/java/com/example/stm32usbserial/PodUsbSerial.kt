@@ -53,7 +53,7 @@ class PodUsbSerialService: Service() {
             usbDevices.forEach() { entry ->
                 mDevice = entry.value
                 val intent: PendingIntent =
-                    PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), 0)
+                    PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_MUTABLE)
                 mUsbManager.requestPermission(mDevice, intent)
 
                 return
